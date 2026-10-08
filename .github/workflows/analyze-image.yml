@@ -35,6 +35,37 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pillow gradio_client requests
 
+      - name: Mark images as processing
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          inbox = Path("vision/inbox")
+          results = Path("vision/results")
+          results.mkdir(parents=True, exist_ok=True)
+          exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"}
+          now = datetime.now(timezone.utc).isoformat()
+
+          for image in sorted(p for p in inbox.rglob("*") if p.is_file() and p.suffix.lower() in exts):
+              status = results / f"{image.stem}.status.json"
+              status.write_text(json.dumps({
+                  "image": str(image.relative_to(inbox)),
+                  "status": "PROCESSING",
+                  "updated_at": now
+              }, indent=2) + "\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vision/results
+          if git diff --cached --quiet; then
+            echo "No status changes."
+          else
+            git commit -m "Mark vision analysis as processing"
+            git push
+          fi
+
       - name: Run external vision analysis
         env:
           HF_VISION_SPACE: ${{ vars.HF_VISION_SPACE || 'akhaliq/Qwen3-VL-2B-Instruct' }}
@@ -42,13 +73,14 @@ jobs:
         run: python tools/analyze_image.py
 
       - name: Commit analysis results
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add vision/results
           if git diff --cached --quiet; then
-            echo "No analysis results to commit."
+            echo "No analysis result changes."
           else
-            git commit -m "Add external vision analysis results"
+            git commit -m "Update external vision analysis status"
             git push
           fi
