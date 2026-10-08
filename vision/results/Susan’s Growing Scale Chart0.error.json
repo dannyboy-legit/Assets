@@ -2,6 +2,6 @@
   "image": "Susan\u2019s Growing Scale Chart0.png",
   "model_space": "akhaliq/Qwen3-VL-2B-Instruct",
   "endpoint": "/chat",
-  "analyzed_at": "2026-10-08T07:42:35.271478+00:00",
-  "error": "AppError('The upstream Gradio app has raised an exception but has not enabled verbose error reporting. To enable, set show_error=True in launch().')"
+  "analyzed_at": "2026-10-08T07:45:06.583210+00:00",
+  "error": "AppError('You have exceeded your ZeroGPU quota (180s requested vs. 163s left). Try again in 18:12:13. Authenticate with a Hugging Face token for more quota - https://huggingface.co/settings/tokens')"
 }
