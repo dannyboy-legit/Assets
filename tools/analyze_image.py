@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import torch
 from PIL import Image
-from transformers import AutoModelForVision2Seq, AutoProcessor
+from transformers import AutoProcessor, AutoModelForImageTextToText
 
 IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"}
 MODEL_ID = os.environ.get("VISION_MODEL", "HuggingFaceTB/SmolVLM-256M-Instruct")
@@ -58,7 +58,7 @@ def main():
     try:
         print("Loading", MODEL_ID)
         processor = AutoProcessor.from_pretrained(MODEL_ID)
-        model = AutoModelForVision2Seq.from_pretrained(MODEL_ID, torch_dtype=torch.float32, low_cpu_mem_usage=True).to("cpu").eval()
+        model = AutoModelForImageTextToText.from_pretrained(MODEL_ID, torch_dtype=torch.float32, low_cpu_mem_usage=True).to("cpu").eval()
     except Exception as e:
         for image in pending: status(results, image, inbox, "ERROR", model=MODEL_ID, runtime="github-hosted-runner-cpu", error=repr(e))
         return 0
