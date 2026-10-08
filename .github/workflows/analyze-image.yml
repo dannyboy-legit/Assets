@@ -1,88 +1,42 @@
-name: External vision analysis
+name: Local vision analysis
 
 on:
   push:
-    paths:
-      - "vision/inbox/**"
-      - "tools/analyze_image.py"
-      - ".github/workflows/analyze-image.yml"
+    paths: ["vision/inbox/**", "tools/analyze_image.py", ".github/workflows/analyze-image.yml"]
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: external-vision-analysis
+  group: local-vision-analysis
   cancel-in-progress: false
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
+        with: {fetch-depth: 1}
       - name: Set up Python
         uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
+        with: {python-version: "3.11"}
+      - name: Install local vision dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pillow gradio_client requests
-
-      - name: Mark images as processing
-        run: |
-          python - <<'PY'
-          import json
-          from datetime import datetime, timezone
-          from pathlib import Path
-
-          inbox = Path("vision/inbox")
-          results = Path("vision/results")
-          results.mkdir(parents=True, exist_ok=True)
-          exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif"}
-          now = datetime.now(timezone.utc).isoformat()
-
-          for image in sorted(p for p in inbox.rglob("*") if p.is_file() and p.suffix.lower() in exts):
-              status = results / f"{image.stem}.status.json"
-              status.write_text(json.dumps({
-                  "image": str(image.relative_to(inbox)),
-                  "status": "PROCESSING",
-                  "updated_at": now
-              }, indent=2) + "\n")
-          PY
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add vision/results
-          if git diff --cached --quiet; then
-            echo "No status changes."
-          else
-            git commit -m "Mark vision analysis as processing"
-            git push
-          fi
-
-      - name: Run external vision analysis
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install transformers accelerate pillow sentencepiece
+      - name: Run local vision analysis
         env:
-          HF_VISION_SPACE: ${{ vars.HF_VISION_SPACE || 'akhaliq/Qwen3-VL-2B-Instruct' }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          VISION_MODEL: HuggingFaceTB/SmolVLM-256M-Instruct
+          VISION_MAX_NEW_TOKENS: "2048"
         run: python tools/analyze_image.py
-
       - name: Commit analysis results
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add vision/results
-          if git diff --cached --quiet; then
-            echo "No analysis result changes."
-          else
-            git commit -m "Update external vision analysis status"
-            git push
-          fi
-
-# Trigger a fresh run using the current worker code.
+          if git diff --cached --quiet; then echo "No result changes."; else git commit -m "Update local vision analysis results"; git push; fi
