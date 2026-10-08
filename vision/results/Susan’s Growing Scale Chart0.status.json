@@ -1,8 +1,5 @@
 {
-  "image": "Susan’s Growing Scale Chart0.png",
-  "status": "ERROR",
-  "updated_at": "2026-10-08T07:43:06.964885+00:00",
-  "model_space": "akhaliq/Qwen3-VL-2B-Instruct",
-  "endpoint": "/chat",
-  "error": "AppError('The upstream Gradio app has raised an exception but has not enabled verbose error reporting. To enable, set show_error=True in launch().')"
+  "image": "Susan\u2019s Growing Scale Chart0.png",
+  "status": "PROCESSING",
+  "updated_at": "2026-10-08T07:45:04.082284+00:00"
 }
