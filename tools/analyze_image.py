@@ -63,7 +63,7 @@ def choose_endpoint(client):
     )
 
 
-def build_args(spec, image_path, prompt):
+def build_args(spec, image_path, prompt, endpoint_name_hint=""):
     params = spec.get("parameters", []) if isinstance(spec, dict) else []
     args = []
 
@@ -71,7 +71,12 @@ def build_args(spec, image_path, prompt):
         name = str(p.get("parameter_name", p.get("name", ""))).lower()
         typ = str(p.get("type", "")).lower()
 
-        if "image" in name or typ in {"image", "filepath"}:
+        if "message" in name and (typ in {"dict", "object"} or "chat" in endpoint_name_hint):
+            args.append({
+                "text": prompt,
+                "files": [handle_file(str(image_path))],
+            })
+        elif "image" in name or typ in {"image", "filepath"}:
             args.append(handle_file(str(image_path)))
         elif any(k in name for k in ("prompt", "question", "query", "instruction", "text", "message")):
             args.append(prompt)
@@ -99,7 +104,7 @@ def analyze(image_path, client, endpoint, spec):
         "Do not guess facts that cannot be visually supported."
     )
     return client.predict(
-        *build_args(spec, image_path, prompt),
+        *build_args(spec, image_path, prompt, endpoint_name_hint=endpoint),
         api_name=endpoint,
     )
 
