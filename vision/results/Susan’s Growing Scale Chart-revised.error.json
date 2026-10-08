@@ -1,8 +1,7 @@
 {
-  "image": "Susan’s Growing Scale Chart-revised.png",
-  "status": "ERROR",
-  "updated_at": "2026-10-08T08:06:38.266925+00:00",
+  "image": "Susan\u2019s Growing Scale Chart-revised.png",
   "model_space": "akhaliq/Qwen3-VL-2B-Instruct",
   "endpoint": "/chat",
+  "analyzed_at": "2026-10-08T08:06:06.668241+00:00",
   "error": "AppError('You have exceeded your free ZeroGPU quota (180s requested vs. 132s left). Try again in 23:49:37. Subscribe to Hugging Face PRO to get 40 min of ZeroGPU quota a day - https://huggingface.co/subscribe/pro?from=ZeroGPU')"
 }
