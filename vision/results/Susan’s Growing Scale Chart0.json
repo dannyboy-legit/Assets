@@ -1,8 +1,125 @@
 {
   "image": "Susan’s Growing Scale Chart0.png",
-  "model_space": "akhaliq/Qwen3-VL-2B-Instruct",
-  "endpoint": "/chat",
-  "analyzed_at": "2026-10-08T07:56:15.003751+00:00",
-  "completed_at": "2026-10-08T07:57:14.467167+00:00",
-  "result": "This is a full-page, vertical infographic titled \"SUSAN'S GROWTH\" in large, black, bold, sans-serif font at the top. The subtitle, \"A Shrinking Husband. A Growing Wife.\", is in a smaller, similar font below the title. The layout is a tall, narrow chart that displays the growth of two figures, Susan and John, from a perspective of increasing height.\n\nThe chart is divided into sections on the left and right, with a vertical axis labeled with height measurements in feet (ft) and meters (m). The scale ranges from 5 ft (1.5 m) at the bottom to 25 ft (7.6 m) at the top, with horizontal lines marking each increment.\n\nThe main content shows six pairs of figures, each representing a different stage of the \"growth\" scenario. The figures are arranged from left to right in a sequence that illustrates a dramatic increase in Susan's height while John's height decreases proportionally. The figures are all women, dressed in yellow button-up shirts and black skirts or shorts, with the exception of the last figure on the far right who is a woman in a yellow shirt and black skirt. The figures are all in the same pose, standing with their hands on their hips, looking upwards. The figures are all of a similar height and build, but the size of the figures and the accompanying text at the bottom of the image illustrate the scale of the difference.\n\nOn the bottom of the image, there is a horizontal line that separates the main content from the text. Below this line, there is a series of labels and measurements for each pair of figures. The labels are in a black, sans-serif font and are arranged in three columns. The first column on the left shows the pair \"Susan: 5.5 ft (1.7 m)\" and \"John: 5.8 ft (1.8 m)\". The second column shows \"Susan: 10 ft (3.0 m)\" and \"John: 3.5 ft (1.1 m)\". The third column shows \"Susan: 15 ft (4.6 m)\" and \"John: 1.9 ft (0.6 m)\". The final column on the far right shows \"Susan: 25 ft (7.6 m)\" and \"John: 0.5 ft (0.15 m)\". The text at the bottom of the image reads \"BIGGER SUSAN. SMALLER JOHN. EVER BIGGER DISPARITY.\"\n\nThe background of the image is a plain, light gray, and the lighting is even and neutral. The overall color scheme is dominated by yellow, black, and gray. The text is black, except for the title and the subtitle, which are in a bold, black font. The figures are rendered in a realistic style with shading and lighting that gives them a three-dimensional appearance. The style of the figures is realistic, with detailed skin textures, hair, and clothing. The overall aesthetic of the image is that of a professional, illustrated graphic or poster."
+  "model": "Qwen/Qwen2.5-VL-3B-Instruct",
+  "runtime": "github-hosted-runner-cpu",
+  "analysis_type": "structured_visual_representation",
+  "schema_version": "3.0",
+  "analyzed_at": "2026-10-08T09:02:43.042467+00:00",
+  "completed_at": "2026-10-08T09:13:30.593057+00:00",
+  "result": {
+    "image_summary": "An infographic titled 'Susan's Growth' comparing the height of a woman named Susan and her husband John across various scales.",
+    "exact_text": "SUSAN'S GROWTH\nA Shrinking Husband. A Growing Wife.\n25 ft.\n(7.6 m)\n20 ft.\n(6.1 m)\n15 ft.\n(4.6 m)\n10 ft.\n(3.0 m)\n5 ft.\n(1.5 m)\nSUSAN:\n5.5 ft\n(1.7 m)\n1×\nSUSAN:\n10 ft\n(3.0 m)\n2×\nSUSAN:\n15 ft\n(4.6 m)\n5×\nSUSAN:\n20 ft\n(6.1 m)\n10×\nSUSAN:\n25 ft\n(7.6 m)\n20×\nSUSAN:\n? (beyond scale)\nJOHN:\n5.8 ft\n(1.8 m)\nJOHN:\n3.5 ft\n(1.1 m)\nJOHN:\n1.9 ft\n(0.6 m)\nJOHN:\n1.0 ft\n(0.3 m)\nJOHN:\n0.5 ft\n(0.15 m)\nJOHN:\n? (negligible)\nBIGGER SUSAN. SMALLER JOHN. EVER BIGGER DISPARITY.",
+    "subjects": [
+      {
+        "name": "Susan",
+        "attributes": [
+          "tall",
+          "in yellow shirt and black skirt"
+        ]
+      },
+      {
+        "name": "John",
+        "attributes": [
+          "short",
+          "in gray shirt and jeans"
+        ]
+      }
+    ],
+    "objects": [
+      {
+        "type": "scale",
+        "position": [
+          0,
+          0
+        ],
+        "size": [
+          1000,
+          1000
+        ]
+      }
+    ],
+    "spatial_relationships": {
+      "Susan": {
+        "relative_position": "left",
+        "size": "smaller"
+      },
+      "John": {
+        "relative_position": "right",
+        "size": "larger"
+      }
+    },
+    "appearance": {
+      "Susan": {
+        "clothing": [
+          "yellow shirt",
+          "black skirt"
+        ],
+        "hair": "curly"
+      },
+      "John": {
+        "clothing": [
+          "gray shirt",
+          "jeans"
+        ],
+        "hair": "short"
+      }
+    },
+    "pose_and_geometry": {
+      "Susan": {
+        "pose": "standing",
+        "geometry": "vertical alignment"
+      },
+      "John": {
+        "pose": "standing",
+        "geometry": "vertical alignment"
+      }
+    },
+    "composition": {
+      "layout": "horizontal",
+      "alignment": "centered"
+    },
+    "colors_and_lighting": {
+      "background": "white",
+      "text_color": "black",
+      "subject_colors": [
+        "yellow",
+        "gray",
+        "black"
+      ]
+    },
+    "measurements_and_data": {
+      "Susan_heights": [
+        5.5,
+        10,
+        15,
+        20,
+        25
+      ],
+      "John_heights": [
+        5.8,
+        3.5,
+        1.9,
+        1.0,
+        0.5
+      ]
+    },
+    "semantic_relationships": {
+      "Susan": {
+        "relationship_with_John": "growing wife, shrinking husband"
+      }
+    },
+    "notable_details": [
+      "The text at the top reads 'SUSAN'S GROWTH'.",
+      "The subtitle states 'A Shrinking Husband. A Growing Wife.'",
+      "The bottom text says 'BIGGER SUSAN. SMALLER JOHN. EVER BIGGER DISPARITY.'"
+    ],
+    "uncertainties": [
+      "The measurement for John's height beyond scale is marked '?'",
+      "The measurement for Susan's height beyond scale is marked '?'"
+    ],
+    "visual_edit_sensitive_details": [
+      "The text color is black.",
+      "The background is white."
+    ]
+  }
 }
