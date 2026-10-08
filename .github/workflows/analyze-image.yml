@@ -1,23 +1,29 @@
-name: Analyze image
+name: External vision analysis
 
 on:
   push:
     paths:
-      - "analysis/request.json"
-      - ".github/workflows/analyze-image.yml"
+      - "vision/inbox/**"
       - "tools/analyze_image.py"
+      - ".github/workflows/analyze-image.yml"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: external-vision-analysis
+  cancel-in-progress: false
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,19 +31,24 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: python -m pip install --upgrade pip pillow gradio_client requests
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow gradio_client requests
 
-      - name: Run vision analysis
+      - name: Run external vision analysis
         env:
-          HF_SPACE: ${{ vars.HF_VISION_SPACE || 'akhaliq/Qwen3-VL-2B-Instruct' }}
+          HF_VISION_SPACE: ${{ vars.HF_VISION_SPACE || 'akhaliq/Qwen3-VL-2B-Instruct' }}
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python tools/analyze_image.py analysis/request.json analysis.json
+        run: python tools/analyze_image.py
 
-      - name: Upload JSON result
-        uses: actions/upload-artifact@v4
-        with:
-          name: image-analysis-result
-          path: analysis.json
-          if-no-files-found: error
-          retention-days: 7
-
+      - name: Commit analysis results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add vision/results
+          if git diff --cached --quiet; then
+            echo "No analysis results to commit."
+          else
+            git commit -m "Add external vision analysis results"
+            git push
+          fi
