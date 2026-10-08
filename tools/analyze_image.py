@@ -87,7 +87,7 @@ def build_args(spec, image_path, prompt, endpoint_name_hint=""):
         elif "temperature" in name:
             args.append(0.2)
         elif "max" in name and "token" in name:
-            args.append(1024)
+            args.append(4096)
         elif "stream" in name:
             args.append(False)
         else:
@@ -95,6 +95,28 @@ def build_args(spec, image_path, prompt, endpoint_name_hint=""):
 
     return args
 
+
+def normalize_result(raw):
+    """Turn JSON-looking model output into real structured JSON when possible."""
+    value = raw
+    if isinstance(value, (list, tuple)) and len(value) == 1:
+        value = value[0]
+    if isinstance(value, str):
+        text = value.strip()
+        if text.startswith("```"):
+            lines = text.splitlines()
+            if lines and lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].strip() == "```":
+                lines = lines[:-1]
+            text = "\n".join(lines).strip()
+            if text.lower().startswith("json"):
+                text = text[4:].lstrip()
+        try:
+            return json.loads(text)
+        except Exception:
+            return value
+    return value
 
 def analyze(image_path, client, endpoint, spec):
     prompt = os.environ.get(
@@ -128,10 +150,31 @@ def main():
     results = Path(os.environ.get("VISION_RESULTS", "vision/results"))
     results.mkdir(parents=True, exist_ok=True)
 
-    images = sorted(
+    all_images = sorted(
         p for p in inbox.rglob("*")
         if p.is_file() and p.suffix.lower() in IMAGE_EXTS
     )
+
+    # Avoid wasting external vision quota on images that already completed.
+    # ERROR images are not retried automatically unless FORCE_RETRY_ERRORS=true.
+    force_retry_errors = os.environ.get("FORCE_RETRY_ERRORS", "").lower() in {"1", "true", "yes"}
+    images = []
+    for image_path in all_images:
+        status_file = status_path(results, image_path, inbox)
+        if status_file.exists():
+            try:
+                previous = json.loads(status_file.read_text(encoding="utf-8"))
+                previous_status = previous.get("status")
+            except Exception:
+                previous_status = None
+            if previous_status == "COMPLETE":
+                print("Skipping already-complete image:", image_path)
+                continue
+            if previous_status == "ERROR" and not force_retry_errors:
+                print("Skipping previous error; set FORCE_RETRY_ERRORS=true to retry:", image_path)
+                continue
+        images.append(image_path)
+
     if not images:
         print("No images found in", inbox)
         return 0
@@ -183,10 +226,12 @@ def main():
             record = {
                 "image": str(image_path.relative_to(inbox)),
                 "model_space": space,
+                "analysis_type": "structured_visual_representation",
+                "schema_version": "2.0",
                 "endpoint": endpoint,
                 "analyzed_at": started,
                 "completed_at": now(),
-                "result": raw,
+                "result": normalize_result(raw),
             }
             out = results / (image_path.stem + ".json")
             out.write_text(
