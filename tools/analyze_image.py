@@ -99,9 +99,23 @@ def build_args(spec, image_path, prompt, endpoint_name_hint=""):
 def analyze(image_path, client, endpoint, spec):
     prompt = os.environ.get(
         "VISION_PROMPT",
-        "Describe this image accurately and conservatively. "
-        "Identify visible objects, people, text, layout, colors, and notable details. "
-        "Do not guess facts that cannot be visually supported."
+        """Act as a meticulous visual-analysis engine. Your job is NOT to write a short caption. "
+        "Create a detailed, machine-useful representation of everything visually relevant in the image, "
+        "so another AI can reason about the image later without seeing the pixels. "
+        "Return JSON with these top-level fields: "
+        "image_summary, exact_text, subjects, objects, spatial_relationships, appearance, pose_and_geometry, "
+        "composition, colors_and_lighting, measurements_and_data, semantic_relationships, notable_details, "
+        "uncertainties, and visual_edit_sensitive_details. "
+        "For every important item, preserve location (left/right/top/bottom/center, foreground/background), "
+        "relative size, attributes, relationships, and confidence when useful. "
+        "Transcribe visible text as accurately as possible and preserve headings, labels, numbers, and units. "
+        "For charts, diagrams, tables, or infographics, extract their structure and readable data rather than "
+        "merely describing them. Describe people and objects at a level useful for detecting later edits: "
+        "clothing, colors, pose, orientation, proportions, facial/hair details when visible, and interactions. "
+        "Record subtle or potentially editable details such as small objects, shadows, borders, markings, "
+        "background elements, overlaps, and asymmetries. Distinguish direct visual observations from interpretation. "
+        "Do not invent hidden facts. If something is uncertain or unreadable, say so explicitly. "
+        "Prefer comprehensive structured observations over elegant prose."""
     )
     return client.predict(
         *build_args(spec, image_path, prompt, endpoint_name_hint=endpoint),
