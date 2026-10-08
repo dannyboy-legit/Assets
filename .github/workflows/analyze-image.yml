@@ -84,3 +84,5 @@ jobs:
             git commit -m "Update external vision analysis status"
             git push
           fi
+
+# Trigger a fresh run using the current worker code.
